@@ -135,10 +135,8 @@ untuk public:
 ### 4. Login ke Sistem
 
 Menggunakan akun admin yang sudah dibuat pada database.
-
-username/email: admin@inventory.com.
-
-password: admin123.
+- username/email: admin@inventory.com.
+- password: admin123.
 
 Link demo:.
 Link presentasi proyek:.
