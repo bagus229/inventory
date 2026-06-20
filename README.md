@@ -44,30 +44,30 @@ Uji tembak API gagal (error 401)
 
 ### 3. Form modal
 - Modal tambah:
-  - Barang dan Stok
-    ##### ![Gambar 1](ss2/gambar5.png).
-  - Supplier
-  ##### ![Gambar 1](ss2/gambar6.png).
-  - Histori
-  ##### ![Gambar 1](ss2/gambar7.png).
-  - Kategori
-  ##### ![Gambar 1](ss2/gambar8.png).
+- Barang dan Stok
+##### ![Gambar 1](ss2/gambar5.png).
+- Supplier
+##### ![Gambar 1](ss2/gambar6.png).
+- Histori
+##### ![Gambar 1](ss2/gambar7.png).
+- Kategori
+##### ![Gambar 1](ss2/gambar8.png).
 
 - Modal Edit:
-  - Barang dan Stok
-  ##### ![Gambar 1](ss2/gambar9.png).
-  - Supplier
-  ##### ![Gambar 1](ss2/gambar10.png).
-  - Histori
-  ##### ![Gambar 1](ss2/gambar11.png).
-  - Kategori
-  ##### ![Gambar 1](ss2/gambar12.png).
+- Barang dan Stok
+##### ![Gambar 1](ss2/gambar9.png).
+- Supplier
+##### ![Gambar 1](ss2/gambar10.png).
+- Histori
+##### ![Gambar 1](ss2/gambar11.png).
+- Kategori
+##### ![Gambar 1](ss2/gambar12.png).
 
 ### 4. Tabel data
 - Barang dan Stok
 ##### ![Gambar 1](ss2/gambar13.png).
 - Supplier
-  ##### ![Gambar 1](ss2/gambar14.png).
+##### ![Gambar 1](ss2/gambar14.png).
 - Histori
 ##### ![Gambar 1](ss2/gambar15.png).
 - Kategori
