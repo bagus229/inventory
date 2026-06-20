@@ -25,8 +25,10 @@ Frontend:
 - TailwindCSS
 
 Hak Akses
+```
 - Pengunjung: halaman beranda
 - Administrator: Mengelola data master dan aktivitas logout.
+```
 
 ## Dokumentasi Database dan Uji Coba
 Skema relasi tabel databse
