@@ -30,4 +30,9 @@ Hak Akses
 
 ## Dokumentasi
 Skema relasi tabel databse
-##### ![Gambar 1](ss1/gambar3.png).
+##### ![Gambar 1](ss1/gambar1.png).
+
+Uji tembak API gagal (error 401)
+##### ![Gambar 1](ss1/gambar2.png).
+
+## Dokumentasi Antarimuka Aplikasi (UI)
