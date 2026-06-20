@@ -41,6 +41,7 @@ Uji tembak API gagal (error 401)
 
 ### 2. Halaman Home dan dashboard admin
 ##### ![Gambar 1](ss2/gambar4.png).
+##### ![Gambar 1](ss2/gambar18.png).
 
 ### 3. Halaman Home pengunjung
 ##### ![Gambar 1](ss2/gambar5.png).
