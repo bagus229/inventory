@@ -77,42 +77,21 @@ Modal Edit:
 
 
 
-## Petunjuk Instalasi — E-Inventory (Backend & Frontend)
+## Petunjuk Instalasi — E-Inventory (Backend & Frontend) 
 
-### Kebutuhan Sistem
+#### Menyiapkan Database
 
-- **XAMPP** (Apache + MySQL + PHP)
-- **Browser modern** (Chrome/Edge/Firefox)
-- Tidak diperlukan Node.js atau Composer — backend (CodeIgniter 4) dan frontend (Vue 3 via CDN) berjalan langsung tanpa proses build.
-
----
-
-#### 1. Menyiapkan Database
-
-1. Buka **XAMPP Control Panel**, jalankan **Apache** dan **MySQL**.
-2. Buka `http://localhost/phpmyadmin`.
-3. Buat database baru bernama `db_inventory`.
-4. Import file SQL struktur tabel (`kategori`, `barang`, `supplier`, `histori_barang`, `users`) ke database tersebut melalui menu **Import**.
-5. (Opsional) Jalankan query untuk menambahkan akun admin awal:
-   ```sql
-   INSERT INTO users (email, password, token, created_at, update_at)
-   VALUES (
-       'admin@inventory.com',
-       '$2b$10$PRXHkS/oAzZrJibx93Dgb.24kdFOCzwfOXIcFJpfrqQbb/iK.kkuu',
-       NULL
-   );
-   ```
-   *(password untuk akun ini: `admin123`)*
-
----
+1. Pertama-tama Buka XAMPP Control Panel, lalu start Apache dan MySQL. Agar nantinya ketika di coba dibrowser dapat berjalan.
+2. Membuka halaman admin di phpMyadmin pada MySQL.
+3. Kemudian saya membuat database dengan nama db_inventory.
+4. Mengimport file SQL struktur tabel (`kategori`, `barang`, `supplier`, `histori_barang`, `users`) ke database.
 
 ### 2. Menjalankan Backend (CodeIgniter 4)
-
-1. Salin folder project backend ke dalam folder `htdocs` XAMPP, misalnya:
+1. Membuka shell pada Xampp lalu, jalankan perintah berikut:
    ```
-   C:\xampp\htdocs\inventory\backend-api
+   php spark serve
    ```
-2. Buka file `.env` di folder backend, sesuaikan koneksi database:
+2. Membuka file `.env` di folder backend, lalu koneksi database yang telah dibuat hubungkan pada file ini:
    ```
    CI_ENVIRONMENT = development
 
@@ -122,43 +101,41 @@ Modal Edit:
    database.default.password =
    database.default.DBDriver = MySQLi
    ```
-3. Backend dapat langsung diakses melalui Apache, contoh:
+3. Backend dapat diakses melalui Apache.
    ```
    http://localhost:8080/
    ```
-   *(sesuaikan port Apache di `httpd-xampp.conf` / `httpd.conf` jika belum menggunakan port 8080)*
-4. Uji backend berjalan dengan membuka:
+4. Kemudian Uji coba backend berjalan dengan menembak pada postman:
    ```
    http://localhost:8080/api/dashboard-summary
    ```
-   Jika muncul data JSON, backend sudah berjalan dengan benar.
-
----
+   Dengan Method GET. Hasilnya jika berhasil akan muncul response JSON yg berisi data.
 
 ### 3. Menjalankan Frontend (Vue 3 via CDN)
 
-1. Salin folder project frontend ke dalam folder `htdocs` XAMPP, misalnya:
+1. Membuka folder project frontend.
    ```
    C:\xampp\htdocs\inventory\frontend-spa
    ```
-2. Pastikan `apiUrl` di file `app.js` frontend menunjuk ke alamat backend yang benar:
+2. Membuat `apiUrl` di file app.js frontend menunjuk ke alamat backend yang sudah dibuat:
    ```javascript
    const apiUrl = 'http://localhost:8080';
    ```
-3. Akses frontend melalui browser:
+3. Uji coba menggunakan Xampp dengan mengakses frontend melalui browser.
+untuk admin:
    ```
    http://localhost/inventory/frontend-spa/
    ```
-
----
+untuk public:
+   ```
+   http://localhost/inventory/frontend-spa/public.html#/
+   ```
 
 ### 4. Login ke Sistem
 
-Gunakan akun admin yang sudah dibuat pada langkah 1:
+Menggunakan akun admin yang sudah dibuat pada database:
+username/email: admin@inventory.com
+password: admin123
 
-| Email | Password |
-|---|---|
-| `admin@inventory.com` | `admin123` |
-
----
-
+Link demo:
+Link presentasi proyek:
