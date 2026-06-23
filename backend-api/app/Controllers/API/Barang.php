@@ -10,11 +10,19 @@ class Barang extends ResourceController
     protected $format = 'json';
 
     public function index()
-    {
-        return $this->respond(
-            $this->model->findAll()
-        );
-    }
+{
+    $db = \Config\Database::connect();
+
+    $data = $db->table('barang b')
+        ->select('b.*, k.nama_kategori, s.nama_supplier')
+        ->join('kategori k', 'k.id = b.id_kategori')
+        ->join('supplier s', 's.id = b.id_supplier')
+        ->orderBy('b.id', 'DESC')
+        ->get()
+        ->getResult();
+
+    return $this->respond($data);
+}
 
     public function create()
     {

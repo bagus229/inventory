@@ -15,9 +15,8 @@ const Home = {
                 </h4>
 
                 <p class="text-lg text-gray-600 leading-relaxed mb-8">
-                    E-Inventory merupakan aplikasi manajemen persediaan barang
-                    berbasis VueJS dan CodeIgniter 4 yang digunakan untuk
-                    membantu proses pengelolaan data kategori, supplier,
+                    Aplikasi E-Inventory merupakan aplikasi manajemen persediaan barang
+                    yang digunakan untuk membantu proses pengelolaan data kategori, supplier,
                     barang, serta pencatatan histori keluar masuk barang
                     secara cepat, aman, dan terintegrasi.
                 </p>

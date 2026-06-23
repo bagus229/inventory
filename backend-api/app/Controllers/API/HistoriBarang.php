@@ -16,9 +16,9 @@ class HistoriBarang extends ResourceController
         $db = db_connect();
 
         $data = $db->table('histori_barang h')
-            ->select('h.*, b.nama_barang, u.nama')
+            ->select('h.*, b.nama_barang, u.nama as nama_user')
             ->join('barang b', 'b.id = h.id_barang')
-            ->join('users u', 'u.id = h.id_user')
+            ->join('users u', 'u.id = id_user')
             ->orderBy('h.id', 'DESC')
             ->get()
             ->getResult();
