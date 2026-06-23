@@ -68,7 +68,7 @@ Modal Edit:
 
 ### 5. Tabel data
 - Barang dan Stok
-
+##### ![Gambar 1](ss2/gambar14.png).
 - Supplier
 ##### ![Gambar 1](ss2/gambar15.png).
 - Histori
