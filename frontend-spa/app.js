@@ -1,3 +1,13 @@
+import Navbar from './components/Navbar.js';
+import Home from './pages/Home.js';
+import Login from './pages/Login.js';
+import Dashboard from './pages/Dashboard.js';
+import Kategori from './pages/Kategori.js';
+import Supplier from './pages/Supplier.js';
+import Barang from './pages/Barang.js';
+import Histori from './pages/Histori.js';
+
+
 const { createApp } = Vue;
 const { createRouter, createWebHashHistory } = VueRouter;
 
@@ -5,7 +15,10 @@ const { createRouter, createWebHashHistory } = VueRouter;
 // KONFIGURASI API
 // =====================================
 
-const apiUrl = 'http://localhost:8080';
+const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8080'
+  : 'https://railway.app'; // Ganti dengan domain Railway Anda nanti jika sudah di-deploy
+
 
 // =====================================
 // AXIOS REQUEST INTERCEPTOR

@@ -30,6 +30,12 @@ const Home = {
                     </div>
 
                     <div class="bg-white shadow-md rounded-lg p-5">
+                        <h3 class="font-semibold text-xl mb-2">Data Kategori</h3>
+                        <p class="text-3xl font-bold text-blue-500">{{ summary.total_kategori }}</p>
+                        <p class="text-gray-500 mt-1">Daftar Kategori</p>
+                    </div>
+
+                    <div class="bg-white shadow-md rounded-lg p-5">
                         <h3 class="font-semibold text-xl mb-2">Data Supplier</h3>
                         <p class="text-3xl font-bold text-green-500">{{ summary.total_supplier }}</p>
                         <p class="text-gray-500 mt-1">Supplier terdaftar</p>
