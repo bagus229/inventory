@@ -71,8 +71,8 @@ const Home = {
             .then(res => {
                 this.summary = res.data;
             })
-            .catch(() => {
-                console.error('Gagal load summary');
+            .catch(err => {
+                console.error('Gagal load summary', err);
             });
     }
 };
