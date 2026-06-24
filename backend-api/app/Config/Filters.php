@@ -72,14 +72,13 @@ class Filters extends BaseFilters
      * }
      */
    public array $globals = [
-    'before' => [
-        'cors', // Pastikan ada koma di sini
+        'before' => [
+            'cors',
         ],
-    ],
-    'after' => [
-
-    ],
-];
+        'after' => [
+            // Kosongkan atau tambahkan filter lain
+        ],
+    ]; // <--- Tanda ini menutup array $globals dengan benar
 
     /**
      * List of filter aliases that works on a
