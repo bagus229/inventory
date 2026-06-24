@@ -6,11 +6,8 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 $routes->options('(:any)', function() {});
 $routes->post('api/login', 'Api\Auth::login');
-<<<<<<< HEAD
 $routes->get('dashboard-summary', 'Api\Dashboard::summary'); 
-=======
 $routes->get('api/dashboard-summary', 'Api\Dashboard::summary');
->>>>>>> 1ef158d6f0efc3e3a15f514b6ce372dbde0043e4
 
 $routes->group('api', ['filter' => 'auth'], function ($routes) {
     $routes->post('logout', 'Api\Auth::logout');
