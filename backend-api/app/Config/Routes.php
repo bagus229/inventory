@@ -10,7 +10,7 @@ $routes->get('/', 'Home::index');
 $routes->options('(:any)', function() {});
 
 $routes->post('api/login', 'Api\Auth::login');
-$routes->get('api/dashboard-summary', 'Api\Dashboard::summary'); 
+$routes->get('api/dashboard-summary', 'Api\Dashboard::summary');
 
 $routes->group('api', ['filter' => 'auth'], function ($routes) {
     $routes->post('logout', 'Api\Auth::logout');
