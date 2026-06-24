@@ -12,7 +12,9 @@ use CodeIgniter\Config\BaseConfig;
 class Cors extends BaseConfig
 {
     public array $default = [
-        'allowedOrigins' => [],
+        'allowedOrigins' => [
+            'https://uas-web2-312410382-bagus-aditya-her.vercel.app',
+        ],
 
         'allowedOriginsPatterns' => [
             '.*',

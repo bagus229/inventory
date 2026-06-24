@@ -5,9 +5,7 @@ const { createRouter, createWebHashHistory } = VueRouter;
 // KONFIGURASI API
 // =====================================
 
-const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:8080'
-  : 'https://railway.app'; // Ganti dengan domain Railway Anda nanti jika sudah di-deploy
+const apiUrl = 'https://uasweb2312410382bagusadityahermawan-production.up.railway.app'; // Ganti dengan domain Railway Anda nanti jika sudah di-deploy
 
 
 // =====================================
