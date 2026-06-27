@@ -41,8 +41,8 @@ class HistoriModel extends Model
                 barang.kode_barang,
                 users.nama as nama_user
             ')
-            ->join('barang', 'barang.id = histori_barang.barang_id')
-            ->join('users', 'users.id = histori_barang.user_id')
+            ->join('barang', 'barang.id = histori_barang.id_barang')
+            ->join('users', 'users.id = histori_barang.id_user')
             ->orderBy('histori_barang.created_at', 'DESC');
 
         if ($id !== null) {
