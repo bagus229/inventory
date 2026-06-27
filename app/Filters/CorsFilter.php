@@ -29,7 +29,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 class CorsFilter implements FilterInterface
 {
     /**
-     * Daftar origin frontend yang diizinkan mengakses API ini.
+     * Daftar origin frontend yang diizinkan mengakses API ini secara EXACT MATCH.
      * Tambahkan domain production Anda di sini saat deploy.
      */
     protected array $allowedOrigins = [
@@ -37,7 +37,19 @@ class CorsFilter implements FilterInterface
         'http://127.0.0.1:5173',
         'http://localhost:3000',   // fallback CRA/dev server lain
         'http://localhost:8080',
-        'https://uas-web2-312410382-bagus-aditya-her.vercel.app', // ← ini
+        'https://uas-web2-312410382-bagus-aditya-her.vercel.app', // domain production Vercel
+    ];
+
+    /**
+     * Pattern (regex) untuk origin yang diizinkan secara dinamis.
+     * Vercel membuat banyak domain preview otomatis setiap deploy/branch
+     * (contoh: uas-web2-...-git-main-bagus-team.vercel.app, atau
+     * ...-9uc99guru-bagus-team.vercel.app), sehingga daripada menambah
+     * satu-satu secara manual setiap kali Vercel generate domain baru,
+     * kita izinkan semua subdomain *.vercel.app milik project ini.
+     */
+    protected array $allowedOriginPatterns = [
+        '/^https:\/\/uas-web2-312410382-bagus-aditya-hermawan[a-z0-9\-]*\.vercel\.app$/i',
     ];
 
     /**
@@ -90,17 +102,29 @@ class CorsFilter implements FilterInterface
     }
 
     /**
-     * Mengembalikan origin yang diizinkan jika cocok dengan whitelist,
-     * atau string kosong jika tidak (sehingga browser akan menolaknya).
+     * Mengembalikan origin yang diizinkan jika cocok dengan whitelist
+     * (exact match) atau pattern (regex untuk subdomain Vercel dinamis),
+     * atau string kosong jika tidak cocok sama sekali.
      */
     protected function resolveAllowedOrigin(string $origin): string
     {
-        if ($origin !== '' && in_array($origin, $this->allowedOrigins, true)) {
+        if ($origin === '') {
+            return $this->allowedOrigins[0] ?? '';
+        }
+
+        if (in_array($origin, $this->allowedOrigins, true)) {
             return $origin;
         }
 
-        // Tidak match whitelist -> kembalikan origin pertama sebagai default
-        // aman untuk development. Di production, sebaiknya kembalikan ''.
+        foreach ($this->allowedOriginPatterns as $pattern) {
+            if (preg_match($pattern, $origin) === 1) {
+                return $origin;
+            }
+        }
+
+        // Tidak match whitelist maupun pattern -> kembalikan origin pertama
+        // sebagai default aman untuk development. Di production, sebaiknya
+        // kembalikan '' supaya origin yang tidak dikenal benar-benar ditolak.
         return $this->allowedOrigins[0] ?? '';
     }
 }
