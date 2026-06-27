@@ -24,23 +24,32 @@ class DashboardController extends BaseApiController
         $kategoriModel  = new KategoriModel();
         $supplierModel  = new SupplierModel();
         $historiModel   = new HistoriModel();
-
+    
         $totalBarang   = $barangModel->countAllResults();
         $totalKategori = $kategoriModel->countAllResults();
         $totalSupplier = $supplierModel->countAllResults();
-
-        // Barang dengan stok di bawah 10 dianggap menipis
+        $totalHistori  = $historiModel->countAllResults();
+    
+        // Hitung total stok
+        $totalStok = $barangModel->selectSum('stok')->first()['stok'] ?? 0;
+    
+        // Barang dengan stok <= 10
         $stokMenipis = $barangModel->getBarangWithRelasi();
-        $stokMenipis = array_values(array_filter($stokMenipis, static fn ($b) => (int) $b['stok'] <= 10));
-
+        $stokMenipis = array_values(array_filter(
+            $stokMenipis,
+            static fn($b) => (int) $b['stok'] <= 10
+        ));
+    
         $transaksiTerbaru = array_slice($historiModel->getHistoriWithRelasi(), 0, 5);
-
+    
         return $this->successResponse([
-            'total_barang'       => $totalBarang,
-            'total_kategori'     => $totalKategori,
-            'total_supplier'     => $totalSupplier,
-            'barang_stok_menipis'=> $stokMenipis,
-            'transaksi_terbaru'  => $transaksiTerbaru,
+            'total_barang'        => $totalBarang,
+            'total_kategori'      => $totalKategori,
+            'total_supplier'      => $totalSupplier,
+            'total_histori'       => $totalHistori,
+            'total_stok'          => (int) $totalStok,
+            'barang_stok_menipis' => $stokMenipis,
+            'transaksi_terbaru'   => $transaksiTerbaru,
         ], 'Ringkasan dashboard berhasil diambil.');
     }
 }
