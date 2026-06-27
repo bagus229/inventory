@@ -37,6 +37,7 @@ class CorsFilter implements FilterInterface
         'http://127.0.0.1:5173',
         'http://localhost:3000',   // fallback CRA/dev server lain
         'http://localhost:8080',
+        'https://uas-web2-312410382-bagus-aditya-her.vercel.app', // ← ini
     ];
 
     /**
