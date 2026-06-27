@@ -36,7 +36,7 @@ class HistoriModel extends Model
     public function getHistoriWithRelasi(?int $id = null)
     {
         $builder = $this->select('
-                histori_builder.*,
+                histori_barang.*,
                 barang.nama_barang,
                 barang.kode_barang,
                 users.nama as nama_user
