@@ -65,19 +65,14 @@ class Database extends Config
     ];
 
     public function __construct()
-    {
-        parent::__construct();
+{
+    parent::__construct();
 
-        // Baca dari environment variables Railway
-        $this->default['hostname'] = env('database.default.hostname', 'localhost');
-        $this->default['username'] = env('database.default.username', 'root');
-        $this->default['password'] = env('database.default.password', '');
-        $this->default['database'] = env('database.default.database', 'db_inventory');
-        $this->default['port']     = (int) env('database.default.port', 3306);
-        $this->default['DBDriver'] = env('database.default.DBDriver', 'MySQLi');
-
-        if (ENVIRONMENT === 'testing') {
-            $this->defaultGroup = 'tests';
-        }
-    }
+    $this->default['hostname'] = getenv('MYSQLHOST');
+    $this->default['username'] = getenv('MYSQLUSER');
+    $this->default['password'] = getenv('MYSQLPASSWORD');
+    $this->default['database'] = getenv('MYSQLDATABASE');
+    $this->default['port']     = (int) getenv('MYSQLPORT');
+    $this->default['DBDriver'] = 'MySQLi';
+}
 }
