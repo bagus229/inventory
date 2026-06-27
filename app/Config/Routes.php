@@ -17,7 +17,7 @@ $routes->get('/', static function () {
 | Filter 'cors' jalan global lewat $methods di Filters.php (lihat Config/Filters.php)
 */
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
-    $routes->get('dashboard-summary', 'DashboardController::summaryFlat');
+    $routes->get('dashboard-summary', 'DashboardController::summary');
 
     // ===== AUTH (Public, tidak butuh token) =====
     $routes->post('login', 'AuthController::login');
