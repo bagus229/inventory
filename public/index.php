@@ -17,7 +17,7 @@ if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
         PHP_VERSION,
     );
 
-    header('HTTP/1.1 503 Service Unavailable.', true, 503);
+
     echo $message;
 
     exit(1);
