@@ -1,0 +1,10 @@
+.git
+.gitignore
+README.md
+vendor/
+writable/cache/*
+writable/logs/*
+writable/session/*
+writable/uploads/*
+.env
+*.md
