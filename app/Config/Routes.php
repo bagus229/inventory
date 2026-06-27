@@ -54,5 +54,5 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
 
     // Endpoint khusus untuk Home.js: GET /api/dashboard-summary
     // (URL pakai tanda hubung "-", BUKAN slash "/", sesuai axios.get(apiUrl + '/api/dashboard-summary') di frontend)
-    $routes->get('dashboard-summary', 'DashboardController::summaryFlat');
+
 });
