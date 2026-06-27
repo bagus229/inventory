@@ -1,5 +1,40 @@
 <?php
 
+// --------------------------------------------------------------------
+// FORCE CORS BYPASS (Letakkan tepat di bawah tag <?php )
+// --------------------------------------------------------------------
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    // Mengizinkan domain Vercel Anda secara spesifik
+    $allowed_origins = [
+        'https://vercel.app'
+    ];
+
+    if (in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        header("Access-Control-Allow-Credentials: true");
+    }
+}
+
+// Jika browser mengirim Preflight (OPTIONS), langsung jawab di sini tanpa masuk ke core CI4
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+    }
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+    }
+    exit(0); // Matikan eksekusi, kirim status 200 ke browser
+}
+// --------------------------------------------------------------------
+
+
+// ... Sisa kode bawaan public/index.php CI4 Anda (seperti baris di bawah ini) ...
+// define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
+// ... dst
+
+
 use CodeIgniter\Boot;
 use Config\Paths;
 
