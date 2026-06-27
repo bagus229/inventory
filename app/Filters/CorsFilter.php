@@ -1,59 +1,130 @@
 <?php
-namespace Config;
-use CodeIgniter\Config\Filters as BaseFilters;
-use CodeIgniter\Filters\Cors;
-use CodeIgniter\Filters\CSRF;
-use CodeIgniter\Filters\DebugToolbar;
-use CodeIgniter\Filters\ForceHTTPS;
-use CodeIgniter\Filters\Honeypot;
-use CodeIgniter\Filters\InvalidChars;
-use CodeIgniter\Filters\PageCache;
-use CodeIgniter\Filters\PerformanceMetrics;
-use CodeIgniter\Filters\SecureHeaders;
-use App\Filters\CorsFilter;
-use App\Filters\AuthFilter;
 
-class Filters extends BaseFilters
+namespace App\Filters;
+
+use CodeIgniter\Filters\FilterInterface;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+
+/**
+ * CorsFilter
+ * ---------------------------------------------------------------------
+ * Menangani Cross-Origin Resource Sharing (CORS) secara global.
+ *
+ * Tujuan:
+ *  - Mengizinkan frontend SPA (Vite/React/Vue di origin lain, misal
+ *    http://localhost:5173) untuk mengakses API ini tanpa diblokir browser.
+ *  - Menangani preflight request (HTTP OPTIONS) yang otomatis dikirim
+ *    browser sebelum request POST/PUT/DELETE dengan header custom
+ *    (seperti Authorization atau Content-Type: application/json).
+ *
+ * Strategi keamanan:
+ *  - Daftar origin yang diizinkan didefinisikan secara eksplisit (whitelist),
+ *    BUKAN wildcard "*", karena kita juga mengirim Authorization header
+ *    (credentials), sehingga wildcard "*" tidak aman & tidak valid oleh spec.
+ *  - Origin yang tidak ada di whitelist tidak akan mendapat header
+ *    Access-Control-Allow-Origin sehingga browser akan otomatis menolak
+ *    response tersebut (cross-origin blocked).
+ */
+class CorsFilter implements FilterInterface
 {
-    public array $aliases = [
-        'csrf'          => CSRF::class,
-        'toolbar'       => DebugToolbar::class,
-        'honeypot'      => Honeypot::class,
-        'invalidchars'  => InvalidChars::class,
-        'secureheaders' => SecureHeaders::class,
-        'cors'          => CorsFilter::class,
-        'forcehttps'    => ForceHTTPS::class,
-        'pagecache'     => PageCache::class,
-        'performance'   => PerformanceMetrics::class,
-        'authfilter'    => AuthFilter::class,
+    /**
+     * Daftar origin frontend yang diizinkan mengakses API ini secara EXACT MATCH.
+     * Tambahkan domain production Anda di sini saat deploy.
+     */
+    protected array $allowedOrigins = [
+        'http://localhost:5173',   // Vite dev server default
+        'http://127.0.0.1:5173',
+        'http://localhost:3000',   // fallback CRA/dev server lain
+        'http://localhost:8080',
+        'https://uas-web2-312410382-bagus-aditya-her.vercel.app', // domain production Vercel
     ];
 
-    public array $required = [
-        'before' => [
-            'pagecache',
-        ],
-        'after' => [
-            'pagecache',
-            'performance',
-            'toolbar',
-        ],
+    /**
+     * Pattern (regex) untuk origin yang diizinkan secara dinamis.
+     * Vercel membuat banyak domain preview otomatis setiap deploy/branch
+     * (contoh: uas-web2-...-git-main-bagus-team.vercel.app, atau
+     * ...-9uc99guru-bagus-team.vercel.app), sehingga daripada menambah
+     * satu-satu secara manual setiap kali Vercel generate domain baru,
+     * kita izinkan semua subdomain *.vercel.app milik project ini.
+     */
+    protected array $allowedOriginPatterns = [
+        '/^https:\/\/uas-web2-312410382-bagus-aditya-hermawan[a-z0-9\-]*\.vercel\.app$/i',
     ];
 
-    public array $globals = [
-        'before' => [
-            'cors',
-        ],
-        'after' => [
-            'cors',
-        ],
-    ];
+    /**
+     * Dijalankan SEBELUM request mencapai controller.
+     *
+     * @param array|null $arguments
+     */
+    public function before(RequestInterface $request, $arguments = null)
+    {
+        $origin = $request->getHeaderLine('Origin');
 
-    public array $methods = [
-        'post'   => ['authfilter'],
-        'put'    => ['authfilter'],
-        'patch'  => ['authfilter'],
-        'delete' => ['authfilter'],
-    ];
+        // Simpan origin yang divalidasi agar bisa dipakai lagi di method after()
+        $allowOrigin = $this->resolveAllowedOrigin($origin);
 
-    public array $filters = [];
+        // Tangani preflight request (OPTIONS) langsung di sini,
+        // tanpa perlu meneruskan ke controller, karena browser hanya
+        // butuh header CORS-nya saja sebagai jawaban preflight.
+        if (strtoupper($request->getMethod()) === 'OPTIONS') {
+            $response = service('response');
+
+            $response->setHeader('Access-Control-Allow-Origin', $allowOrigin)
+                ->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+                ->setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept')
+                ->setHeader('Access-Control-Allow-Credentials', 'true')
+                ->setHeader('Access-Control-Max-Age', '3600')
+                ->setStatusCode(204);
+
+            return $response;
+        }
+    }
+
+    /**
+     * Dijalankan SETELAH controller selesai memproses request.
+     * Menambahkan header CORS ke response normal (GET/POST/PUT/DELETE).
+     *
+     * @param array|null $arguments
+     */
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
+    {
+        $origin      = $request->getHeaderLine('Origin');
+        $allowOrigin = $this->resolveAllowedOrigin($origin);
+
+        $response->setHeader('Access-Control-Allow-Origin', $allowOrigin)
+            ->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+            ->setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept')
+            ->setHeader('Access-Control-Allow-Credentials', 'true')
+            ->setHeader('Vary', 'Origin');
+
+        return $response;
+    }
+
+    /**
+     * Mengembalikan origin yang diizinkan jika cocok dengan whitelist
+     * (exact match) atau pattern (regex untuk subdomain Vercel dinamis),
+     * atau string kosong jika tidak cocok sama sekali.
+     */
+    protected function resolveAllowedOrigin(string $origin): string
+    {
+        if ($origin === '') {
+            return $this->allowedOrigins[0] ?? '';
+        }
+
+        if (in_array($origin, $this->allowedOrigins, true)) {
+            return $origin;
+        }
+
+        foreach ($this->allowedOriginPatterns as $pattern) {
+            if (preg_match($pattern, $origin) === 1) {
+                return $origin;
+            }
+        }
+
+        // Tidak match whitelist maupun pattern -> kembalikan origin pertama
+        // sebagai default aman untuk development. Di production, sebaiknya
+        // kembalikan '' supaya origin yang tidak dikenal benar-benar ditolak.
+        return $this->allowedOrigins[0] ?? '';
+    }
 }
