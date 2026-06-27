@@ -47,3 +47,9 @@ Options -Indexes
 # Disable server signature start
 ServerSignature Off
 # Disable server signature end
+
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Headers "origin, x-requested-with, content-type, authorization, x-api-key"
+    Header set Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
+</IfModule>
