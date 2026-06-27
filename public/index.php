@@ -6,7 +6,7 @@
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     // Mengizinkan domain Vercel Anda secara spesifik
     $allowed_origins = [
-        'https://vercel.app'
+        'https://uas-web2-312410382-bagus-aditya-her.vercel.app/#/'
     ];
 
     if (in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
