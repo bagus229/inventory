@@ -121,7 +121,7 @@ class BarangController extends BaseApiController
             return $this->errorResponse('Barang tidak ditemukan.', 404);
         }
 
-        // Karena FK histori_transaksi.barang_id -> barang.id bersifat CASCADE,
+        // Karena FK histori_barang.barang_id -> barang.id bersifat CASCADE,
         // menghapus barang otomatis menghapus histori transaksinya juga.
         $this->barangModel->delete($id);
 

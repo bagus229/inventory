@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class HistoriModel extends Model
 {
-    protected $table         = 'histori_transaksi';
+    protected $table         = 'histori_barang';
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $allowedFields = [
