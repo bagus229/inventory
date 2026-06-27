@@ -10,8 +10,8 @@ class BarangModel extends Model
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $allowedFields = [
-        'kategori_id',
-        'supplier_id',
+        'id_kategori',
+        'id_supplier',
         'kode_barang',
         'nama_barang',
         'harga_beli',
@@ -25,8 +25,8 @@ class BarangModel extends Model
     protected $updatedField  = 'updated_at';
 
     protected $validationRules = [
-        'kategori_id' => 'required|integer|is_not_unique[kategori.id]',
-        'supplier_id' => 'required|integer|is_not_unique[supplier.id]',
+        'id_kategori' => 'required|integer|is_not_unique[kategori.id]',
+        'id_supplier' => 'required|integer|is_not_unique[supplier.id]',
         'kode_barang' => 'required|max_length[30]|is_unique[barang.kode_barang,id,{id}]',
         'nama_barang' => 'required|min_length[3]|max_length[150]',
         'harga_beli'  => 'permit_empty|decimal',
@@ -36,10 +36,10 @@ class BarangModel extends Model
     ];
 
     protected $validationMessages = [
-        'kategori_id' => [
+        'id_kategori' => [
             'is_not_unique' => 'Kategori yang dipilih tidak ditemukan.',
         ],
-        'supplier_id' => [
+        'id_supplier' => [
             'is_not_unique' => 'Supplier yang dipilih tidak ditemukan.',
         ],
         'kode_barang' => [
@@ -59,8 +59,8 @@ class BarangModel extends Model
                 kategori.nama_kategori,
                 supplier.nama_supplier
             ')
-            ->join('kategori', 'kategori.id = barang.kategori_id')
-            ->join('supplier', 'supplier.id = barang.supplier_id');
+            ->join('kategori', 'kategori.id = barang.id_kategori')
+            ->join('supplier', 'supplier.id = barang.id_supplier');
 
         if ($id !== null) {
             return $builder->where('barang.id', $id)->first();

@@ -57,8 +57,8 @@ class BarangController extends BaseApiController
      * Protected: butuh Authorization Bearer Token.
      * Body contoh:
      * {
-     *   "kategori_id": 1,
-     *   "supplier_id": 1,
+     *   "id_kategori": 1,
+     *   "id_supplier": 1,
      *   "kode_barang": "BRG-010",
      *   "nama_barang": "Mouse Wireless",
      *   "harga_beli": 50000,
