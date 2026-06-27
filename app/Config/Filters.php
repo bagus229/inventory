@@ -11,7 +11,9 @@ use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
-use CodeIgniter\Filters\SecureHeaders;
+use App\Filters\CorsFilter;  // ← tambahkan
+use App\Filters\AuthFilter; 
+
 
 class Filters extends BaseFilters
 {

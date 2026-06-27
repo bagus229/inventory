@@ -16,8 +16,8 @@ $routes->get('/', static function () {
 | Semua route di bawah ini diprefix dengan /api
 | Filter 'cors' jalan global lewat $methods di Filters.php (lihat Config/Filters.php)
 */
-$routes->get('api/dashboard-summary', 'DashboardController::namaMethod');
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
+    $routes->get('dashboard-summary', 'DashboardController::summaryFlat');
 
     // ===== AUTH (Public, tidak butuh token) =====
     $routes->post('login', 'AuthController::login');
