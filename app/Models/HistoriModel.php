@@ -10,11 +10,12 @@ class HistoriModel extends Model
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $allowedFields = [
-        'barang_id',
-        'user_id',
-        'jenis_transaksi',
+        'id_barang',
+        'id_user',
+        'jenis',
         'jumlah',
         'keterangan',
+        'tanggal',
     ];
 
     protected $useTimestamps = true;
@@ -22,8 +23,8 @@ class HistoriModel extends Model
     protected $updatedField  = 'updated_at';
 
     protected $validationRules = [
-        'barang_id'       => 'required|integer|is_not_unique[barang.id]',
-        'user_id'         => 'required|integer|is_not_unique[users.id]',
+        'id_barang'       => 'required|integer|is_not_unique[barang.id]',
+        'id_user'         => 'required|integer|is_not_unique[users.id]',
         'jenis_transaksi' => 'required|in_list[masuk,keluar]',
         'jumlah'          => 'required|integer|greater_than[0]',
         'keterangan'      => 'permit_empty|string',
@@ -35,17 +36,17 @@ class HistoriModel extends Model
     public function getHistoriWithRelasi(?int $id = null)
     {
         $builder = $this->select('
-                histori_transaksi.*,
+                histori_builder.*,
                 barang.nama_barang,
                 barang.kode_barang,
                 users.nama as nama_user
             ')
-            ->join('barang', 'barang.id = histori_transaksi.barang_id')
-            ->join('users', 'users.id = histori_transaksi.user_id')
-            ->orderBy('histori_transaksi.created_at', 'DESC');
+            ->join('barang', 'barang.id = histori_barang.barang_id')
+            ->join('users', 'users.id = histori_barang.user_id')
+            ->orderBy('histori_barang.created_at', 'DESC');
 
         if ($id !== null) {
-            return $builder->where('histori_transaksi.id', $id)->first();
+            return $builder->where('histori_barang.id', $id)->first();
         }
 
         return $builder->findAll();
