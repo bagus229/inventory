@@ -105,12 +105,12 @@ const Histori = {
     methods: {
         loadData() {
             axios.get(apiUrl + '/api/histori')
-                .then(res => { this.histori = res.data; })
+                .then(res => { this.histori = res.data.data; })
                 .catch(err => { console.log(err); });
         },
         loadBarang() {
             axios.get(apiUrl + '/api/barang')
-                .then(res => { this.barangList = res.data; })
+                .then(res => { this.barangList = res.data.data; })
                 .catch(err => { console.log(err); });
         },
         tambah() {
