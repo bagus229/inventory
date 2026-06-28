@@ -25,60 +25,88 @@ class AuthController extends BaseApiController
 
     /**
      * POST /api/login
-     * Body:
-     * {
-     *   "email": "admin@gmail.com",
-     *   "password": "admin123"
-     * }
+     * Body: { "username": "admin", "password": "admin123" }
      */
     public function login()
+
     {
+
         $rules = [
+
             'email'    => 'required|valid_email',
+
             'password' => 'required',
+
         ];
+
+    
 
         if (! $this->validate($rules)) {
+
             return $this->errorResponse('Validasi gagal', 422, $this->validator->getErrors());
+
         }
+
+    
 
         $email    = $this->request->getVar('email');
+
         $password = $this->request->getVar('password');
 
-        $user = $this->userModel
-            ->where('email', $email)
-            ->first();
+    
 
-        if (! $user) {
+        $user = $this->userModel->findByEmail($email);
+
+    
+
+        if (! $user || ! password_verify($password, $user['password'])) {
+
             return $this->errorResponse('Email atau password salah.', 401);
+
         }
 
-        if (! password_verify($password, $user['password'])) {
-            return $this->errorResponse('Email atau password salah.', 401);
-        }
+    
 
         $payload = [
-            'iss' => getenv('JWT_ISSUER') ?: 'inventory-api',
-            'iat' => time(),
-            'exp' => time() + (int)(getenv('JWT_EXPIRE_SECONDS') ?: 3600),
+
+            'iss'  => getenv('JWT_ISSUER') ?: 'inventory-api',
+
+            'iat'  => time(),
+
+            'exp'  => time() + 3600,
+
             'data' => [
+
                 'id'    => $user['id'],
+
                 'nama'  => $user['nama'],
+
                 'email' => $user['email'],
+
             ],
+
         ];
 
-        $secretKey = getenv('JWT_SECRET_KEY') ?: env('JWT_SECRET_KEY');
+    
+
+        $secretKey = getenv('JWT_SECRET_KEY');
+
         $token = JWT::encode($payload, $secretKey, 'HS256');
+
+    
 
         unset($user['password']);
 
+    
+
         return $this->successResponse([
-            'token'      => $token,
-            'token_type' => 'Bearer',
-            'expires_in' => (int)(getenv('JWT_EXPIRE_SECONDS') ?: 3600),
-            'user'       => $user,
+
+            'token' => $token,
+
+            'user'  => $user,
+
         ], 'Login berhasil.');
+
     }
 
     /**
