@@ -70,7 +70,7 @@ const Kategori = {
     methods: {
         loadData() {
             axios.get(apiUrl + '/api/kategori')
-                .then(res => { this.kategori = res.data; })
+                .then(res => { this.kategori = res.data.data; })
                 .catch(err => { console.log(err); });
         },
         tambah() {
