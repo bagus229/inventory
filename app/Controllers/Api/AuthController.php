@@ -28,46 +28,46 @@ class AuthController extends BaseApiController
      * Body: { "username": "admin", "password": "admin123" }
      */
     public function login()
-{
-    $rules = [
-        'username' => 'required',
-        'password' => 'required',
-    ];
+    {
+        $rules = [
+            'email'    => 'required|valid_email',
+            'password' => 'required',
+        ];
 
-    if (! $this->validate($rules)) {
-        return $this->errorResponse('Validasi gagal', 422, $this->validator->getErrors());
+        if (! $this->validate($rules)) {
+            return $this->errorResponse('Validasi gagal', 422, $this->validator->getErrors());
+        }
+
+        $email    = $this->request->getVar('email');
+        $password = $this->request->getVar('password');
+
+        $user = $this->userModel->findByEmail($email);
+
+        if (! $user || ! password_verify($password, $user['password'])) {
+            return $this->errorResponse('Email atau password salah.', 401);
+        }
+
+        $payload = [
+            'iss'  => getenv('JWT_ISSUER') ?: 'inventory-api',
+            'iat'  => time(),
+            'exp'  => time() + 3600,
+            'data' => [
+                'id'    => $user['id'],
+                'nama'  => $user['nama'],
+                'email' => $user['email'],
+            ],
+        ];
+
+        $secretKey = getenv('JWT_SECRET_KEY');
+        $token = JWT::encode($payload, $secretKey, 'HS256');
+
+        unset($user['password']);
+
+        return $this->successResponse([
+            'token' => $token,
+            'user'  => $user,
+        ], 'Login berhasil.');
     }
-
-    $username = $this->request->getVar('username');
-    $password = $this->request->getVar('password');
-
-    $user = $this->userModel->findByUsername($username);
-
-    if (! $user || ! password_verify($password, $user['password'])) {
-        return $this->errorResponse('Username atau password salah.', 401);
-    }
-
-    $payload = [
-        'iss'  => getenv('JWT_ISSUER') ?: 'inventory-api',
-        'iat'  => time(),
-        'exp'  => time() + 3600,
-        'data' => [
-            'id'       => $user['id'],
-            'nama'     => $user['nama'],
-            'username' => $user['username'],
-        ],
-    ];
-
-    $secretKey = getenv('JWT_SECRET_KEY');
-    $token = JWT::encode($payload, $secretKey, 'HS256');
-
-    unset($user['password']);
-
-    return $this->successResponse([
-        'token' => $token,
-        'user'  => $user,
-    ], 'Login berhasil.');
-}
 
     /**
      * POST /api/register
