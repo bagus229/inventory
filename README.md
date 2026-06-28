@@ -135,7 +135,7 @@ untuk public:
 ### 4. Login ke Sistem
 
 Menggunakan akun admin yang sudah dibuat pada database.
-- username/email: admin@inventory.com.
+- username: admin@inventory.com.
 - password: admin123.
 
 Link demo: https://uas-web2-312410382-bagus-aditya-her.vercel.app/#/.
