@@ -74,7 +74,7 @@ template: `
         password: this.password
       })
         .then(res => {
-          localStorage.setItem('userToken', res.data.token);
+          localStorage.setItem('userToken', res.data.data.token);
           localStorage.setItem('isLoggedIn', 'true');
           this.$router.push('/dashboard');
         })
