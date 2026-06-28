@@ -26,11 +26,15 @@ class AuthController extends BaseApiController
     /**
      * POST /api/login
      * Body: { "username": "admin", "password": "admin123" }
-     */
+    */
+    /**
+    * POST /api/login
+    * Body: { "email": "admin@email.com", "password": "admin123" }
+    */
     public function login()
     {
         $rules = [
-            'username' => 'required',
+            'email'    => 'required|valid_email',
             'password' => 'required',
         ];
 
@@ -38,22 +42,26 @@ class AuthController extends BaseApiController
             return $this->errorResponse('Validasi gagal', 422, $this->validator->getErrors());
         }
 
-        $username = $this->request->getVar('username');
+        $email    = $this->request->getVar('email');
         $password = $this->request->getVar('password');
 
-        $user = $this->userModel->findByUsername($username);
+        // Cari user berdasarkan email
+        $user = $this->userModel
+            ->where('email', $email)
+            ->first();
 
         if (! $user || ! password_verify($password, $user['password'])) {
-            return $this->errorResponse('Username atau password salah.', 401);
+            return $this->errorResponse('Email atau password salah.', 401);
         }
 
         $payload = [
-            'iss'  => getenv('JWT_ISSUER') ?: 'inventory-api',
-            'iat'  => time(),
-            'exp'  => time() + (int) (getenv('JWT_EXPIRE_SECONDS') ?: 3600),
+            'iss' => getenv('JWT_ISSUER') ?: 'inventory-api',
+            'iat' => time(),
+            'exp' => time() + (int) (getenv('JWT_EXPIRE_SECONDS') ?: 3600),
             'data' => [
                 'id'       => $user['id'],
                 'username' => $user['username'],
+                'email'    => $user['email'],
                 'role'     => $user['role'],
             ],
         ];
