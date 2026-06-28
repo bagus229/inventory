@@ -54,7 +54,6 @@ class Filters extends BaseFilters
      */
     public array $required = [
         'before' => [
-            'cors',
             'pagecache',  // Web Page Caching
         ],
         'after' => [
@@ -81,6 +80,7 @@ class Filters extends BaseFilters
             // 'invalidchars',
         ],
         'after' => [
+            'cors'
             // 'honeypot',
             // 'secureheaders',
         ],
