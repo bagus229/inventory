@@ -96,17 +96,17 @@ const Barang = {
     methods: {
         loadData() {
             axios.get(apiUrl + '/api/barang')
-                .then(res => { this.barang = res.data; }) // bukan res.data.data
+                .then(res => { this.barang = res.data.data; }) // bukan res.data.data
                 .catch(err => { console.log(err); });
         },
         loadKategori() {
             axios.get(apiUrl + '/api/kategori')
-                .then(res => { this.kategori = res.data; }) // bukan res.data.data
+                .then(res => { this.kategori = res.data.data; }) // bukan res.data.data
                 .catch(err => { console.log(err); });
         },
         loadSupplier() {
             axios.get(apiUrl + '/api/supplier')
-                .then(res => { this.supplier = res.data; }) // bukan res.data.data
+                .then(res => { this.supplier = res.data.data; }) // bukan res.data.data
                 .catch(err => { console.log(err); });
         },
         tambah() {
