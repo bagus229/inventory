@@ -104,7 +104,7 @@ class KategoriController extends BaseApiController
         }
 
         // Cegah hapus kategori yang masih dipakai oleh barang (FK RESTRICT)
-        $usedByBarang = (new \App\Models\BarangModel())->where('kategori_id', $id)->countAllResults();
+        $usedByBarang = (new \App\Models\BarangModel())->where('id_kategori', $id)->countAllResults();
         if ($usedByBarang > 0) {
             return $this->errorResponse('Kategori tidak dapat dihapus karena masih digunakan oleh data barang.', 409);
         }

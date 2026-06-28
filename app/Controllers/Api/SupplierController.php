@@ -86,7 +86,7 @@ class SupplierController extends BaseApiController
             return $this->errorResponse('Supplier tidak ditemukan.', 404);
         }
 
-        $usedByBarang = (new BarangModel())->where('supplier_id', $id)->countAllResults();
+        $usedByBarang = (new BarangModel())->where('id_supplier', $id)->countAllResults();
         if ($usedByBarang > 0) {
             return $this->errorResponse('Supplier tidak dapat dihapus karena masih digunakan oleh data barang.', 409);
         }
