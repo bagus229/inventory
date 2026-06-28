@@ -24,7 +24,16 @@ class BarangModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-    
+    protected $validationRules = [
+        'id_kategori' => 'required|integer|is_not_unique[kategori.id]',
+        'id_supplier' => 'required|integer|is_not_unique[supplier.id]',
+        'kode_barang' => 'required|max_length[30]|is_unique[barang.kode_barang,id,{id}]',
+        'nama_barang' => 'required|min_length[3]|max_length[150]',
+        'harga_beli'  => 'permit_empty|decimal',
+        'harga_jual'  => 'permit_empty|decimal',
+        'stok'        => 'permit_empty|integer',
+        'satuan'      => 'permit_empty|max_length[20]',
+    ];
 
     protected $validationMessages = [
         'id_kategori' => [
