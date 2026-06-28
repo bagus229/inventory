@@ -9,6 +9,7 @@ $routes->post('api/login', 'Api\Auth::login');
 $routes->get('dashboard-summary', 'Api\Dashboard::summary');
 
 $routes->group('api', ['filter' => 'auth'], function ($routes) {
+    $routes->get('dashboard-summary', 'Api\Dashboard::summary');
     $routes->post('logout', 'Api\Auth::logout');
     $routes->get('kategori', 'Api\Kategori::index');
     $routes->post('kategori', 'Api\Kategori::create');
