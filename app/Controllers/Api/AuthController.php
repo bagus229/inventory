@@ -25,12 +25,12 @@ class AuthController extends BaseApiController
 
     /**
      * POST /api/login
-     * Body: { "username": "admin", "password": "admin123" }
-    */
-    /**
-    * POST /api/login
-    * Body: { "email": "admin@email.com", "password": "admin123" }
-    */
+     * Body:
+     * {
+     *   "email": "admin@gmail.com",
+     *   "password": "admin123"
+     * }
+     */
     public function login()
     {
         $rules = [
@@ -45,36 +45,38 @@ class AuthController extends BaseApiController
         $email    = $this->request->getVar('email');
         $password = $this->request->getVar('password');
 
-        // Cari user berdasarkan email
         $user = $this->userModel
             ->where('email', $email)
             ->first();
 
-        if (! $user || ! password_verify($password, $user['password'])) {
+        if (! $user) {
+            return $this->errorResponse('Email atau password salah.', 401);
+        }
+
+        if (! password_verify($password, $user['password'])) {
             return $this->errorResponse('Email atau password salah.', 401);
         }
 
         $payload = [
             'iss' => getenv('JWT_ISSUER') ?: 'inventory-api',
             'iat' => time(),
-            'exp' => time() + (int) (getenv('JWT_EXPIRE_SECONDS') ?: 3600),
+            'exp' => time() + (int)(getenv('JWT_EXPIRE_SECONDS') ?: 3600),
             'data' => [
-                'id'       => $user['id'],
-                'username' => $user['username'],
-                'email'    => $user['email'],
-                'role'     => $user['role'],
+                'id'    => $user['id'],
+                'nama'  => $user['nama'],
+                'email' => $user['email'],
             ],
         ];
 
         $secretKey = getenv('JWT_SECRET_KEY') ?: env('JWT_SECRET_KEY');
-        $token     = JWT::encode($payload, $secretKey, 'HS256');
+        $token = JWT::encode($payload, $secretKey, 'HS256');
 
         unset($user['password']);
 
         return $this->successResponse([
             'token'      => $token,
             'token_type' => 'Bearer',
-            'expires_in' => (int) (getenv('JWT_EXPIRE_SECONDS') ?: 3600),
+            'expires_in' => (int)(getenv('JWT_EXPIRE_SECONDS') ?: 3600),
             'user'       => $user,
         ], 'Login berhasil.');
     }
