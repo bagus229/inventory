@@ -28,48 +28,46 @@ class AuthController extends BaseApiController
      * Body: { "username": "admin", "password": "admin123" }
      */
     public function login()
-    {
-        $rules = [
-            'username' => 'required',
-            'password' => 'required',
-        ];
+{
+    $rules = [
+        'username' => 'required',
+        'password' => 'required',
+    ];
 
-        if (! $this->validate($rules)) {
-            return $this->errorResponse('Validasi gagal', 422, $this->validator->getErrors());
-        }
-
-        $username = $this->request->getVar('username');
-        $password = $this->request->getVar('password');
-
-        $user = $this->userModel->findByUsername($username);
-
-        if (! $user || ! password_verify($password, $user['password'])) {
-            return $this->errorResponse('Username atau password salah.', 401);
-        }
-
-        $payload = [
-            'iss'  => getenv('JWT_ISSUER') ?: 'inventory-api',
-            'iat'  => time(),
-            'exp'  => time() + (int) (getenv('JWT_EXPIRE_SECONDS') ?: 3600),
-            'data' => [
-                'id'       => $user['id'],
-                'username' => $user['username'],
-                'role'     => $user['role'],
-            ],
-        ];
-
-        $secretKey = getenv('JWT_SECRET_KEY') ?: env('JWT_SECRET_KEY');
-        $token     = JWT::encode($payload, $secretKey, 'HS256');
-
-        unset($user['password']);
-
-        return $this->successResponse([
-            'token'      => $token,
-            'token_type' => 'Bearer',
-            'expires_in' => (int) (getenv('JWT_EXPIRE_SECONDS') ?: 3600),
-            'user'       => $user,
-        ], 'Login berhasil.');
+    if (! $this->validate($rules)) {
+        return $this->errorResponse('Validasi gagal', 422, $this->validator->getErrors());
     }
+
+    $username = $this->request->getVar('username');
+    $password = $this->request->getVar('password');
+
+    $user = $this->userModel->findByUsername($username);
+
+    if (! $user || ! password_verify($password, $user['password'])) {
+        return $this->errorResponse('Username atau password salah.', 401);
+    }
+
+    $payload = [
+        'iss'  => getenv('JWT_ISSUER') ?: 'inventory-api',
+        'iat'  => time(),
+        'exp'  => time() + 3600,
+        'data' => [
+            'id'       => $user['id'],
+            'nama'     => $user['nama'],
+            'username' => $user['username'],
+        ],
+    ];
+
+    $secretKey = getenv('JWT_SECRET_KEY');
+    $token = JWT::encode($payload, $secretKey, 'HS256');
+
+    unset($user['password']);
+
+    return $this->successResponse([
+        'token' => $token,
+        'user'  => $user,
+    ], 'Login berhasil.');
+}
 
     /**
      * POST /api/register
