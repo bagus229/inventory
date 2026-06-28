@@ -1,30 +1,48 @@
 <?php
+
 use CodeIgniter\Router\RouteCollection;
+
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
-$routes->options('(:any)', function() {});
-$routes->post('api/login', 'Api\Auth::login'); 
-$routes->get('dashboard-summary', 'Api\Dashboard::summary');
+$routes->get('/', static function () {
+    return view('welcome_message');
+});
+$routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
+    
+    // ====================================================================
+    // PERBAIKAN UTAMA: Izinkan METHOD OPTIONS untuk SEMUA endpoint di dalam /api
+    // Ini menangani Preflight Request dari browser (termasuk Resource Routes)
+    // ====================================================================
+    $routes->options('(:any)', static function () {
+        // Biarkan kosong, filter CORS global di Filters.php yang akan merespons dengan status 200
+    });
 
-$routes->group('api', ['filter' => 'auth'], function ($routes) {
-    $routes->get('dashboard-summary', 'Api\Dashboard::summary');
+    // ===== ENDPOINT SUMMARY =====
+    $routes->get('dashboard-summary', 'DashboardController::summary');
     $routes->post('logout', 'Api\Auth::logout');
-    $routes->get('kategori', 'Api\Kategori::index');
-    $routes->post('kategori', 'Api\Kategori::create');
-    $routes->put('kategori/(:num)', 'Api\Kategori::update/$1');
-    $routes->delete('kategori/(:num)', 'Api\Kategori::delete/$1');
-    $routes->get('barang', 'Api\Barang::index');
-    $routes->post('barang', 'Api\Barang::create');
-    $routes->put('barang/(:num)', 'Api\Barang::update/$1');
-    $routes->delete('barang/(:num)', 'Api\Barang::delete/$1');
-    $routes->get('supplier', 'Api\Supplier::index');
-    $routes->post('supplier', 'Api\Supplier::create');
-    $routes->put('supplier/(:num)', 'Api\Supplier::update/$1');
-    $routes->delete('supplier/(:num)', 'Api\Supplier::delete/$1');
-    $routes->get('histori', 'Api\HistoriBarang::index');
-    $routes->post('histori', 'Api\HistoriBarang::create');
-    $routes->put('histori/(:num)', 'Api\HistoriBarang::update/$1');
-    $routes->delete('histori/(:num)', 'Api\HistoriBarang::delete/$1');
+    // ===== AUTH (Public, tidak butuh token) =====
+    $routes->post('login', 'AuthController::login');
+    $routes->post('register', 'AuthController::register');
+    $routes->post('logout', 'AuthController::logout', ['filter' => 'authfilter']);
+    $routes->get('me', 'AuthController::me', ['filter' => 'authfilter']);
+
+    // ===== RESOURCE ROUTES =====
+    $routes->resource('kategori', [
+        'controller' => 'KategoriController',
+    ]);
+
+    $routes->resource('supplier', [
+        'controller' => 'SupplierController',
+    ]);
+
+    $routes->resource('barang', [
+        'controller' => 'BarangController',
+    ]);
+
+    $routes->resource('histori', [
+        'controller' => 'HistoriController',
+    ]);
+
+    $routes->get('dashboard/summary', 'DashboardController::summary');
 });
