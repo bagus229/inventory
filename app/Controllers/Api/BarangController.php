@@ -68,18 +68,41 @@ class BarangController extends BaseApiController
      * }
      */
     public function create()
-    {
-        $input = $this->request->getJSON(true) ?? $this->request->getPost();
+{
+    try {
+
+        $input = $this->request->getJSON(true);
 
         if (! $this->barangModel->validate($input)) {
-            return $this->errorResponse('Validasi gagal.', 422, $this->barangModel->errors());
+            return $this->respond([
+                'validation' => $this->barangModel->errors()
+            ], 422);
         }
 
         $id = $this->barangModel->insert($input);
-        $barang = $this->barangModel->getBarangWithRelasi($id);
 
-        return $this->successResponse($barang, 'Barang berhasil ditambahkan.', 201);
+        if ($id === false) {
+            return $this->respond([
+                'db_error' => $this->barangModel->errors(),
+                'database_error' => $this->barangModel->db->error()
+            ], 500);
+        }
+
+        return $this->respond([
+            'success' => true,
+            'id' => $id
+        ]);
+
+    } catch (\Throwable $e) {
+
+        return $this->respond([
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ], 500);
+
     }
+}
 
     /**
      * PUT /api/barang/{id}
