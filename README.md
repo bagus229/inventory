@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # CodeIgniter 4 Framework
 
 ## What is CodeIgniter?
@@ -386,4 +385,3 @@ Menggunakan akun admin yang sudah dibuat pada database.
 
 Link demo: https://uas-web2-312410382-bagus-aditya-her.vercel.app/#/.
 Link presentasi proyek: https://youtu.be/nfqkbWNG-fY.
->>>>>>> 0df23a909725c3d98525d52e5dae46b13d1af0ad
