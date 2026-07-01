@@ -127,10 +127,19 @@ class BarangController extends BaseApiController
             return $this->errorResponse('Validasi gagal.', 422, $this->validator->getErrors());
         }
 
-        $this->barangModel->update($id, $input);
-        $updated = $this->barangModel->getBarangWithRelasi((int) $id);
+        $result = $this->barangModel->update($id, $input);
 
-        return $this->successResponse($updated, 'Barang berhasil diperbarui.');
+if ($result === false) {
+    return $this->respond([
+        'success' => false,
+        'errors' => $this->barangModel->errors(),
+        'dbError' => $this->barangModel->db->error(),
+    ], 422);
+}
+
+$updated = $this->barangModel->getBarangWithRelasi((int)$id);
+
+return $this->successResponse($updated, 'Barang berhasil diperbarui.');
     }
 
     /**
