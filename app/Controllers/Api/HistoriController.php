@@ -67,7 +67,7 @@ class HistoriController extends BaseApiController
     public function create()
     {
         $input = $this->request->getJSON(true) ?? $this->request->getPost();
-        $input['id_user'] = 1;
+        $input['id_user'] = 3;
 
         if (! $this->historiModel->validate($input)) {
             return $this->errorResponse('Validasi gagal.', 422, $this->historiModel->errors());
