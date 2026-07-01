@@ -129,17 +129,11 @@ class BarangController extends BaseApiController
 
         $result = $this->barangModel->update($id, $input);
 
-if ($result === false) {
-    return $this->respond([
-        'success' => false,
-        'errors' => $this->barangModel->errors(),
-        'dbError' => $this->barangModel->db->error(),
-    ], 422);
-}
-
-$updated = $this->barangModel->getBarangWithRelasi((int)$id);
-
-return $this->successResponse($updated, 'Barang berhasil diperbarui.');
+return $this->respond([
+    'result' => $result,
+    'errors' => $this->barangModel->errors(),
+    'dbError' => $this->barangModel->db->error(),
+]);
     }
 
     /**
