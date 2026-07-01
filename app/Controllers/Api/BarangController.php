@@ -108,33 +108,37 @@ class BarangController extends BaseApiController
      * PUT /api/barang/{id}
      * Protected: butuh Authorization Bearer Token.
      */
-    public function update($id = null)
-    {
-        $barang = $this->barangModel->find($id);
+   public function update($id = null)
+{
+    $barang = $this->barangModel->find($id);
 
-        if (! $barang) {
-            return $this->errorResponse('Barang tidak ditemukan.', 404);
-        }
-
-        $input = $this->request->getJSON(true) ?? $this->request->getRawInput();
-        return $this->respond($input);
-
-        // Saat update, kode_barang boleh sama dengan data lama (handled oleh rule is_unique[...,id,{id}])
-        $rules = $this->barangModel->getValidationRules();
-        $rules['kode_barang'] = "required|max_length[30]|is_unique[barang.kode_barang,id,{$id}]";
-
-        if (! $this->validateData($input, $rules)) {
-            return $this->errorResponse('Validasi gagal.', 422, $this->validator->getErrors());
-        }
-
-        $result = $this->barangModel->update($id, $input);
-
-return $this->respond([
-    'result' => $result,
-    'errors' => $this->barangModel->errors(),
-    'dbError' => $this->barangModel->db->error(),
-]);
+    if (! $barang) {
+        return $this->respond([
+            'status' => false,
+            'message' => 'Barang tidak ditemukan'
+        ], 404);
     }
+
+    $input = $this->request->getJSON(true);
+
+    $rules = $this->barangModel->getValidationRules();
+    $rules['kode_barang'] = "required|max_length[30]|is_unique[barang.kode_barang,id,{$id}]";
+
+    if (! $this->validateData($input, $rules)) {
+        return $this->respond([
+            'validator' => $this->validator->getErrors()
+        ], 422);
+    }
+
+    $result = $this->barangModel->update($id, $input);
+
+    return $this->respond([
+        'result' => $result,
+        'errors' => $this->barangModel->errors(),
+        'dbError' => $this->barangModel->db->error(),
+        'input' => $input,
+    ]);
+}
 
     /**
      * DELETE /api/barang/{id}
