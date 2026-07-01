@@ -57,7 +57,7 @@ class HistoriController extends BaseApiController
      * Protected: butuh Authorization Bearer Token.
      * Body contoh:
      * {
-     *   "barang_id": 1,
+     *   "id_barang": 1,
      *   "user_id": 1,
      *   "jenis_transaksi": "keluar",
      *   "jumlah": 5,
@@ -67,19 +67,20 @@ class HistoriController extends BaseApiController
     public function create()
     {
         $input = $this->request->getJSON(true) ?? $this->request->getPost();
+        $input['id_user'] = 1;
 
         if (! $this->historiModel->validate($input)) {
             return $this->errorResponse('Validasi gagal.', 422, $this->historiModel->errors());
         }
 
-        $barang = $this->barangModel->find($input['barang_id']);
+        $barang = $this->barangModel->find($input['id_barang']);
 
         if (! $barang) {
             return $this->errorResponse('Barang tidak ditemukan.', 404);
         }
 
         // Validasi stok cukup jika transaksi keluar
-        if ($input['jenis_transaksi'] === 'keluar' && $barang['stok'] < $input['jumlah']) {
+        if ($input['jenis'] === 'keluar' && $barang['stok'] < $input['jumlah']) {
             return $this->errorResponse('Stok barang tidak cukup untuk transaksi keluar ini.', 400);
         }
 
@@ -88,7 +89,7 @@ class HistoriController extends BaseApiController
 
         $historiId = $this->historiModel->insert($input);
 
-        $stokBaru = $input['jenis_transaksi'] === 'masuk'
+        $stokBaru = $input['jenis'] === 'masuk'
             ? $barang['stok'] + $input['jumlah']
             : $barang['stok'] - $input['jumlah'];
 
@@ -119,13 +120,13 @@ class HistoriController extends BaseApiController
             return $this->errorResponse('Histori transaksi tidak ditemukan.', 404);
         }
 
-        $barang = $this->barangModel->find($histori['barang_id']);
+        $barang = $this->barangModel->find($histori['id_barang']);
 
         $db = \Config\Database::connect();
         $db->transStart();
 
         if ($barang) {
-            $stokBaru = $histori['jenis_transaksi'] === 'masuk'
+            $stokBaru = $histori['jenis'] === 'masuk'
                 ? $barang['stok'] - $histori['jumlah'] // batalkan penambahan
                 : $barang['stok'] + $histori['jumlah']; // batalkan pengurangan
 
@@ -141,5 +142,90 @@ class HistoriController extends BaseApiController
         }
 
         return $this->successResponse(null, 'Histori transaksi berhasil dihapus & stok barang dikembalikan.');
+    }
+
+    public function update($id = null)
+    {
+        $histori = $this->historiModel->find($id);
+
+        if (! $histori) {
+            return $this->errorResponse('Histori transaksi tidak ditemukan.', 404);
+        }
+
+        $input = $this->request->getJSON(true) ?? $this->request->getRawInput();
+
+        if (! $this->historiModel->validate($input)) {
+            return $this->errorResponse(
+                'Validasi gagal.',
+                422,
+                $this->historiModel->errors()
+            );
+        }
+
+        $barangLama = $this->barangModel->find($histori['id_barang']);
+
+        if (! $barangLama) {
+            return $this->errorResponse('Barang tidak ditemukan.', 404);
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // Rollback stok lama
+        if ($histori['jenis'] === 'masuk') {
+            $stok = $barangLama['stok'] - $histori['jumlah'];
+        } else {
+            $stok = $barangLama['stok'] + $histori['jumlah'];
+        }
+
+        $this->barangModel->update($barangLama['id'], [
+            'stok' => $stok
+        ]);
+
+        // Barang baru
+        $barangBaru = $this->barangModel->find($input['id_barang']);
+
+        if (! $barangBaru) {
+            $db->transRollback();
+            return $this->errorResponse('Barang baru tidak ditemukan.', 404);
+        }
+
+        // Hitung stok baru
+        if ($input['jenis'] === 'masuk') {
+            $stokBaru = $barangBaru['stok'] + $input['jumlah'];
+        } else {
+
+            if ($barangBaru['stok'] < $input['jumlah']) {
+                $db->transRollback();
+                return $this->errorResponse(
+                    'Stok barang tidak mencukupi.',
+                    400
+                );
+            }
+
+            $stokBaru = $barangBaru['stok'] - $input['jumlah'];
+        }
+
+        $this->barangModel->update($barangBaru['id'], [
+            'stok' => $stokBaru
+        ]);
+
+        $this->historiModel->update($id, $input);
+
+        $db->transComplete();
+
+        if (! $db->transStatus()) {
+            return $this->errorResponse(
+                'Gagal memperbarui histori.',
+                500
+            );
+        }
+
+        $data = $this->historiModel->getHistoriWithRelasi($id);
+
+        return $this->successResponse(
+            $data,
+            'Histori berhasil diperbarui.'
+        );
     }
 }
