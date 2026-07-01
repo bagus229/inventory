@@ -117,6 +117,7 @@ class BarangController extends BaseApiController
         }
 
         $input = $this->request->getJSON(true) ?? $this->request->getRawInput();
+        return $this->respond($input);
 
         // Saat update, kode_barang boleh sama dengan data lama (handled oleh rule is_unique[...,id,{id}])
         $rules = $this->barangModel->getValidationRules();
